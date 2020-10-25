@@ -86,15 +86,16 @@ public class HelloServlet extends HttpServlet{
 		httpPost.setHeader("Content-Type", "application/json");
 		httpPost.setHeader("Authorization", "Bearer " + CHANNEL_ACCESS_TOKEN);
 		//返信用のJSON
-		String replybody = String.format("{\"replytoken\":\"%s\", "
-				+ "\"messages\":[{\"type\":\"text\", \"text\":\"リプライありがとう！\"}]}", replyToken);
+		String replybody = String.format("{\"replyToken\":\"%s\", \"messages\":[{\"type\":\"text\", \"text\":\"リプライありがとう！\"}]}", replyToken);
 		StringEntity params = new StringEntity(replybody, StandardCharsets.UTF_8);
 		httpPost.setEntity(params);
+		System.out.println("リプライ送信");
 		try (CloseableHttpClient client = HttpClients.createDefault();
 				CloseableHttpResponse resp = client.execute(httpPost);
 				BufferedReader br = new BufferedReader(new InputStreamReader(resp.getEntity().getContent(),
 						StandardCharsets.UTF_8))) {
 			int statusCode = resp.getStatusLine().getStatusCode();
+			System.out.println(statusCode);
 			switch (statusCode) {
 			case 200:
 				br.readLine();
@@ -106,6 +107,6 @@ public class HelloServlet extends HttpServlet{
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("リプライ送信");
+		System.out.println("処理終了");
 	}
 }
