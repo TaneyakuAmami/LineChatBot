@@ -26,10 +26,12 @@ public class HelloServlet extends HttpServlet{
 	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		System.out.println("Post開始");
 
 		//署名認証
 		String body = null;
-		new Function().authorization(request, response, body);
+		body = new Function().authorization(request, response, body);
+		System.out.println(body);
 
 		//返信
 		new Reply().reply(body);

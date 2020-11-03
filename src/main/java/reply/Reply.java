@@ -20,24 +20,32 @@ import constants.Constants;
 public class Reply {
 
 	public void reply(String body) throws IOException {
-		//応答メッセージ作成
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode events = mapper.readTree(body).path("events");
-		//リプライの種類
-		String type = events.path(0).path("message").path("type").asText(null);
-		//テキスト
-		String query = events.path(0).path("message").path("text").asText(null);
-		//返信用Token
-		String replyToken = events.path(0).path("replyToken").asText(null);
+		System.out.println("返信開始");
+		System.out.println(body);
+		HttpPost httpPost = null;
+		try {
+			//応答メッセージ作成
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode events = mapper.readTree(body).path("events");
+			//リプライの種類
+			String type = events.path(0).path("message").path("type").asText(null);
+			//テキスト
+			String query = events.path(0).path("message").path("text").asText(null);
+			//返信用Token
+			String replyToken = events.path(0).path("replyToken").asText(null);
 
-		//リプライを送る
-		HttpPost httpPost = new HttpPost("https://api.line.me/v2/bot/message/reply");
-		httpPost.setHeader("Content-Type", "application/json");
-		httpPost.setHeader("Authorization", "Bearer " + Constants.CHANNEL_ACCESS_TOKEN);
-		//返信用のJSON
-		String replybody = String.format("{\"replyToken\":\"%s\", \"messages\":[{\"type\":\"text\", \"text\":\"リプライありがとう！\"}]}", replyToken);
-		StringEntity params = new StringEntity(replybody, StandardCharsets.UTF_8);
-		httpPost.setEntity(params);
+			//リプライを送る
+			httpPost = new HttpPost("https://api.line.me/v2/bot/message/reply");
+			httpPost.setHeader("Content-Type", "application/json");
+			httpPost.setHeader("Authorization", "Bearer " + Constants.CHANNEL_ACCESS_TOKEN);
+			//返信用のJSON
+			String replybody = String.format("{\"replyToken\":\"%s\", \"messages\":[{\"type\":\"text\", \"text\":\"リプライありがとう！\"}]}", replyToken);
+			StringEntity params = new StringEntity(replybody, StandardCharsets.UTF_8);
+			httpPost.setEntity(params);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		System.out.println("リプライ送信");
 		try (CloseableHttpClient client = HttpClients.createDefault();
 				CloseableHttpResponse resp = client.execute(httpPost);
@@ -56,7 +64,7 @@ public class Reply {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("処理終了");
+		System.out.println("返信終了");
 	}
 
 }

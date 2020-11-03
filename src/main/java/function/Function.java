@@ -17,7 +17,8 @@ import constants.Constants;
 
 public class Function {
 
-	public void authorization(HttpServletRequest request, HttpServletResponse response, String body) throws IOException {
+	public String authorization(HttpServletRequest request, HttpServletResponse response, String body) throws IOException {
+		System.out.println("認証開始");
 		try (Stream<String> stream = request.getReader().lines()) {
 			String signature = request.getHeader("X-Line-Signature");
 			body = stream.reduce((s1, s2) -> s1 + "¥n" + s2).orElse("");
@@ -31,12 +32,15 @@ public class Function {
 				//LINEからのリクエストじゃない場合の処理
 				//常に200を返す
 				response.setStatus(200);
-				return;
+				return body;
 			}
 		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
 			e.printStackTrace();
 		}
 		System.out.println("認証OK");
+		System.out.println(body);
+
+		return body;
 	}
 
 }
